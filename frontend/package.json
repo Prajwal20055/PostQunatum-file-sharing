@@ -1,0 +1,17 @@
+{
+  "name": "frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 5173"
+  },
+  "devDependencies": {
+    "vite": "^7.2.2",
+    "vite-plugin-wasm": "^3.5.0"
+  },
+  "dependencies": {
+    "pqc-kyber": "^0.7.0"
+  }
+}

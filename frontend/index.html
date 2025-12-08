@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Secure File Share</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+</head>
+<body>
+  <h1>Secure File Share — Test UI</h1>
+
+  <label>User id: <input id="userId" value="alice"></label><br>
+  <label>Passphrase: <input id="passphrase" type="password"></label><br><br>
+  <button id="genKeyBtn">Generate Keypair (fake)</button>
+  <button id="uploadPubBtn">Upload Public Key</button>
+  <button id="fetchPubBtn">Fetch Public Key</button>
+  <pre id="keyOutput"></pre>
+
+  <hr>
+  <h2>Send Encrypted File</h2>
+  <label>Recipients (comma-separated userIds): <input id="recipients" value="bob,charlie"></label><br>
+  <label>File: <input id="fileInput" type="file"></label><br>
+  <button id="sendBtn">Encrypt & Send File</button>
+  <pre id="fileOutput"></pre>
+
+  <hr>
+  <h2>Receive & Decrypt File</h2>
+  <label>Your User id: <input id="downloadUserId" value="alice"></label><br>
+  <label>Your Passphrase: <input id="downloadPassphrase" type="password"></label><br>
+  <label>File ID: <input id="fileId" placeholder="paste file ID here"></label><br>
+  <button id="fetchFileBtn">Fetch & Decrypt File</button>
+  <pre id="downloadOutput"></pre>
+
+  <!-- Inline debug UI: visible client-side logger and quick checks -->
+  <div id="client-debug" style="position:fixed;left:8px;bottom:8px;width:320px;max-height:40vh;overflow:auto;background:#111;color:#eee;padding:8px;border-radius:6px;font-family:monospace;font-size:12px;z-index:9999">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+      <strong>Client status</strong>
+      <button id="client-debug-clear" style="font-size:11px">Clear</button>
+    </div>
+    <div id="client-debug-log">(logs appear here)</div>
+  </div>
+
+  <script>
+    // simple on-page logger to help debug when devtools aren't visible
+    (function(){
+      const logEl = document.getElementById('client-debug-log');
+      function append(msg){
+        const line = document.createElement('div');
+        line.textContent = (new Date()).toLocaleTimeString() + ' - ' + msg;
+        logEl.appendChild(line);
+        logEl.scrollTop = logEl.scrollHeight;
+      }
+      document.getElementById('client-debug-clear').addEventListener('click', ()=> logEl.innerHTML='');
+      append('inline script running');
+
+      // quick DOM checks
+      append('buttons: gen=' + !!document.getElementById('genKeyBtn') + ' upload=' + !!document.getElementById('uploadPubBtn') + ' fetch=' + !!document.getElementById('fetchPubBtn'));
+      // try to fetch the module file to see if it's served
+      fetch('/src/keys.js', { method: 'GET' }).then(r => {
+        append('/src/keys.js status=' + r.status);
+        if (!r.ok) append('keys.js not served (check dev server)');
+      }).catch(e => append('fetch error: ' + e.message));
+    })();
+  </script>
+
+  <script type="module" src="/src/keys.js"></script>
+  <script type="module" src="/src/upload.js"></script>
+  <script type="module" src="/src/download.js"></script>
+</body>
+</html>
+
